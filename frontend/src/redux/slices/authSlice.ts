@@ -4,7 +4,6 @@ interface LoginRequest {
     email: string;
     password: string;
 }
-
 interface LoginResponse {
     token: string;
     user: {
@@ -13,6 +12,23 @@ interface LoginResponse {
         email: string;
         role: string;
     };
+}
+interface RegisterUserResponse {
+    message: string;
+    user: {
+        id: string;
+        name: string;
+        email: string;
+        role: string;
+        tenantId: string;
+    };
+}
+
+interface RegisterUserRequest {
+    name: string;
+    email: string;
+    password: string;
+    domain: string;
 }
 
 export const authApi = createApi({
@@ -52,7 +68,14 @@ export const authApi = createApi({
                 method: 'GET',
             }),
         }),
+        registerUser: builder.mutation<RegisterUserResponse, RegisterUserRequest>({
+            query: (userData) => ({
+                url: 'api/register-user',
+                method: 'POST',
+                body: userData,
+            }),
+        }),
     }),
 });
 
-export const { useLoginMutation, useRegisterTenantMutation, useGetCurrentUserQuery } = authApi;
+export const { useLoginMutation, useRegisterTenantMutation, useGetCurrentUserQuery, useRegisterUserMutation } = authApi;

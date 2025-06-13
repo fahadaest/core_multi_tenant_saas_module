@@ -1,14 +1,43 @@
 import { useState } from "react";
+import { useNavigate } from 'react-router-dom';
 import { Link } from "react-router";
 import { EyeCloseIcon, EyeIcon } from "../../icons";
 import Label from "../form/Label";
 import Input from "../form/input/InputField";
+import { useRegisterUserMutation } from "../../redux/slices/authSlice";
 interface SignInFormProps {
   company?: string;
 }
 
 export default function SignUpForm({ company }: SignInFormProps) {
   const [showPassword, setShowPassword] = useState(false);
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [registerUser] = useRegisterUserMutation();
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      const fullName = `${firstName} ${lastName}`;
+      const response = await registerUser({
+        name: fullName,
+        email,
+        password,
+        domain: company || '',
+      }).unwrap();
+
+      alert('Registration successful!');
+      navigate(`/${company?.toLowerCase()}/signin`);
+
+    } catch (err) {
+      console.error('Failed to register user:', err);
+      alert('Registration failed, please try again.');
+    }
+  };
   return (
     <div className="flex flex-col flex-1 w-full overflow-y-auto lg:w-1/2 no-scrollbar">
       <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
@@ -52,7 +81,7 @@ export default function SignUpForm({ company }: SignInFormProps) {
                 </span>
               </div>
             </div>
-            <form>
+            <form onSubmit={handleSubmit}>
               <div className="space-y-5">
                 <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                   <div className="sm:col-span-1">
@@ -64,6 +93,8 @@ export default function SignUpForm({ company }: SignInFormProps) {
                       id="fname"
                       name="fname"
                       placeholder="Enter your first name"
+                      onChange={(e) => setFirstName(e.target.value)}
+                      value={firstName}
                     />
                   </div>
                   <div className="sm:col-span-1">
@@ -75,6 +106,8 @@ export default function SignUpForm({ company }: SignInFormProps) {
                       id="lname"
                       name="lname"
                       placeholder="Enter your last name"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
                     />
                   </div>
                 </div>
@@ -87,6 +120,21 @@ export default function SignUpForm({ company }: SignInFormProps) {
                     id="email"
                     name="email"
                     placeholder="Enter your email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <Label>
+                    Company Domain<span className="text-error-500">*</span>
+                  </Label>
+                  <Input
+                    value={company}
+                    type="text"
+                    id="domain"
+                    name="domain"
+                    placeholder="Enter your domain (e.g., example.com)"
+                    readOnly
                   />
                 </div>
                 <div>
@@ -97,6 +145,8 @@ export default function SignUpForm({ company }: SignInFormProps) {
                     <Input
                       placeholder="Enter your password"
                       type={showPassword ? "text" : "password"}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
                     />
                     <span
                       onClick={() => setShowPassword(!showPassword)}
