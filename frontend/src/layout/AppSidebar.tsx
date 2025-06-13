@@ -70,7 +70,7 @@ const navItems: NavItem[] = [
   // Admin menu
   {
     icon: <GridIcon />,
-    name: "Tenant Overview",
+    name: "Users Overview",
     roles: ["Admin"],
     subItems: [
       { name: "Total users in tenant", path: "/", pro: false },

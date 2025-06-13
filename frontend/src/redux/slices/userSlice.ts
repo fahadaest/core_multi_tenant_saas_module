@@ -5,7 +5,6 @@ interface User {
     name: string;
     email: string;
     role: string;
-    tenantId: string | null;
 }
 
 interface AuthState {
@@ -13,6 +12,7 @@ interface AuthState {
     isLoggedIn: boolean;
     loading: boolean;
     error: string | null;
+    tenantDomain: string;
 }
 
 const initialState: AuthState = {
@@ -20,6 +20,7 @@ const initialState: AuthState = {
     isLoggedIn: false,
     loading: false,
     error: null,
+    tenantDomain: '',
 };
 
 const authSlice = createSlice({
@@ -35,6 +36,7 @@ const authSlice = createSlice({
             state.user = null;
             state.isLoggedIn = false;
             state.error = null;
+            state.tenantDomain = '';
         },
         setLoading(state, action: PayloadAction<boolean>) {
             state.loading = action.payload;
@@ -42,9 +44,12 @@ const authSlice = createSlice({
         setError(state, action: PayloadAction<string | null>) {
             state.error = action.payload;
         },
+        setTenantDomain(state, action: PayloadAction<string>) {
+            state.tenantDomain = action.payload;
+        },
     },
 });
 
-export const { setUser, clearUser, setLoading, setError } = authSlice.actions;
+export const { setUser, clearUser, setLoading, setError, setTenantDomain, } = authSlice.actions;
 
 export default authSlice.reducer;

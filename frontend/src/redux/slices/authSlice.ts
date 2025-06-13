@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-
+import type { RootState } from '../store';
 interface LoginRequest {
     email: string;
     password: string;
@@ -12,7 +12,6 @@ interface LoginResponse {
         name: string;
         email: string;
         role: string;
-        tenantId: string | null;
     };
 }
 
@@ -21,6 +20,16 @@ export const authApi = createApi({
     baseQuery: fetchBaseQuery({
         baseUrl: import.meta.env.VITE_API_URL,
         credentials: 'include',
+        prepareHeaders: (headers, { getState }) => {
+            const state = getState() as RootState;
+            const tenantDomain = state.auth.tenantDomain;
+
+            if (tenantDomain) {
+                headers.set('X-Tenant-Domain', tenantDomain);
+            }
+
+            return headers;
+        },
     }),
     endpoints: (builder) => ({
         login: builder.mutation<LoginResponse, LoginRequest>({
@@ -37,7 +46,13 @@ export const authApi = createApi({
                 body: data,
             }),
         }),
+        getCurrentUser: builder.query<LoginResponse['user'], void>({
+            query: () => ({
+                url: 'api/auth/user',
+                method: 'GET',
+            }),
+        }),
     }),
 });
 
-export const { useLoginMutation, useRegisterTenantMutation } = authApi;
+export const { useLoginMutation, useRegisterTenantMutation, useGetCurrentUserQuery } = authApi;

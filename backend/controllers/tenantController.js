@@ -1,4 +1,3 @@
-// controllers/tenantController.js
 const bcrypt = require('bcryptjs');
 const Tenant = require('../models/Tenant');
 const User = require('../models/User');
@@ -8,7 +7,6 @@ exports.registerTenant = async (req, res) => {
     try {
         const { companyName, companyEmail, domain, industry, password } = req.body;
 
-        // Sanitize domain
         const cleanDomain = domain.toLowerCase().replace(/\s+/g, '');
 
         const existing = await Tenant.findOne({ domain: cleanDomain });
@@ -19,7 +17,6 @@ exports.registerTenant = async (req, res) => {
             return res.status(400).json({ message: 'Email already registered' });
         }
 
-        // 1. Create the tenant
         const tenant = await Tenant.create({
             name: companyName,
             email: companyEmail,
@@ -27,7 +24,6 @@ exports.registerTenant = async (req, res) => {
             industry,
         });
 
-        // 2. Create Admin user for tenant
         const hashedPassword = await bcrypt.hash(password, 10);
         await User.create({
             name: `${companyName} Admin`,
@@ -38,7 +34,6 @@ exports.registerTenant = async (req, res) => {
             authProvider: 'local',
         });
 
-        // 3. Send welcome email
         await sendTenantWelcomeEmail(companyEmail, cleanDomain);
 
         return res.status(201).json({ message: 'Tenant registered successfully' });
