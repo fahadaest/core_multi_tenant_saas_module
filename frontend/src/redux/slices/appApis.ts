@@ -1,12 +1,23 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import type { RootState } from '../store';
-
+interface Tenant {
+    _id: string;
+    name: string;
+    email: string;
+    domain: string;
+    industry: string;
+}
 interface User {
     _id: string;
     name: string;
     email: string;
     role: string;
     tenantId: string | null;
+}
+
+interface AdminDataResponse {
+    tenants: Tenant[];
+    users: User[];
 }
 
 export const appApi = createApi({
@@ -32,7 +43,13 @@ export const appApi = createApi({
                 method: 'GET',
             }),
         }),
+        getAllTenantsAndUsers: builder.query<AdminDataResponse, void>({
+            query: () => ({
+                url: 'api/auth/getAllTenantsAndUsers',
+                method: 'GET',
+            }),
+        }),
     }),
 });
 
-export const { useGetTenantUsersQuery } = appApi;
+export const { useGetTenantUsersQuery, useGetAllTenantsAndUsersQuery } = appApi;
