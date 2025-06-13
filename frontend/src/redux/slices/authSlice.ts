@@ -31,6 +31,21 @@ interface RegisterUserRequest {
     domain: string;
 }
 
+interface GoogleSignupRequest {
+    tokenId: string;
+    domain: string;
+}
+
+interface GoogleSignupResponse {
+    user: {
+        id: string;
+        name: string;
+        email: string;
+        role: string;
+        tenantId: string;
+    };
+}
+
 export const authApi = createApi({
     reducerPath: 'authApi',
     baseQuery: fetchBaseQuery({
@@ -75,7 +90,14 @@ export const authApi = createApi({
                 body: userData,
             }),
         }),
+        googleSignup: builder.mutation<GoogleSignupResponse, GoogleSignupRequest>({
+            query: (data) => ({
+                url: 'auth/google-signup',
+                method: 'POST',
+                body: data,
+            }),
+        }),
     }),
 });
 
-export const { useLoginMutation, useRegisterTenantMutation, useGetCurrentUserQuery, useRegisterUserMutation } = authApi;
+export const { useLoginMutation, useRegisterTenantMutation, useGetCurrentUserQuery, useRegisterUserMutation, useGoogleSignupMutation } = authApi;

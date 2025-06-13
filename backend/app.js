@@ -7,6 +7,7 @@ const tenantRoutes = require('./routes/tenantRoutes');
 const userRoutes = require('./routes/userRoutes');
 const getAllTenantsAndUsersRoute = require('./routes/getAllTenantsAndUsersRoute');
 const userRegistrationRoutes = require('./routes/userRegistrationRoutes');
+const googleAuthRoutes = require('./routes/googleAuthRoutes');
 
 const app = express();
 
@@ -19,5 +20,6 @@ app.use('/api/tenants', tenantRoutes);
 app.use('/api/auth', userRoutes);
 app.use('/api/auth', getAllTenantsAndUsersRoute);
 app.use('/api', userRegistrationRoutes);
+app.use('/auth', googleAuthRoutes);
 
 module.exports = app;
